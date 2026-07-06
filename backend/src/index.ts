@@ -51,15 +51,6 @@ app.use('/uploads', requireAuth, express.static(path.join(process.cwd(), 'upload
 // Routes
 app.use('/api', routes)
 
-// Sentry error handler (must be before regular error handler)
-if (env.SENTRY_DSN) {
-  try {
-    app.use(Sentry.setupErrorHandler())
-  } catch {
-    // Sentry handler not available in this version
-  }
-}
-
 // Error handling
 app.use(errorHandler)
 

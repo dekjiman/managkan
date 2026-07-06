@@ -7,8 +7,8 @@ import { wrap } from '../utils/wrap'
 
 const router = Router()
 
-async function resolveWorkspace(slugOrId: string) {
-  const ws = await workspaceService.getById(slugOrId)
+async function resolveWorkspace(slugOrId: string, userId: string) {
+  const ws = await workspaceService.getById(slugOrId, userId)
   if (!ws) throw Object.assign(new Error('Workspace not found'), { status: 404 })
   return ws
 }
@@ -20,13 +20,13 @@ const createSchema = z.object({
 })
 
 router.get('/', requireAuth, wrap(async (req: AuthRequest, res) => {
-  const workspace = await resolveWorkspace(req.query.workspaceSlug as string)
+  const workspace = await resolveWorkspace(req.query.workspaceSlug as string, req.user!.id)
   const hooks = await webhookService.getByWorkspace(workspace.id)
   res.json({ data: hooks })
 }))
 
 router.post('/', requireAuth, wrap(async (req: AuthRequest, res) => {
-  const workspace = await resolveWorkspace(req.query.workspaceSlug as string)
+  const workspace = await resolveWorkspace(req.query.workspaceSlug as string, req.user!.id)
   const data = createSchema.parse(req.body)
   const created = await webhookService.create({
     ...data,
@@ -37,7 +37,7 @@ router.post('/', requireAuth, wrap(async (req: AuthRequest, res) => {
 }))
 
 router.delete('/:publicId', requireAuth, wrap(async (req: AuthRequest, res) => {
-  const workspace = await resolveWorkspace(req.query.workspaceSlug as string)
+  const workspace = await resolveWorkspace(req.query.workspaceSlug as string, req.user!.id)
   await webhookService.delete(req.params.publicId, workspace.id)
   res.json({ message: 'Webhook deleted' })
 }))

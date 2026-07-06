@@ -48,7 +48,7 @@ export const boardService = {
     const conditions = [eq(board.workspaceId, ws.id), isNull(board.deletedAt)]
 
     if (type) {
-      conditions.push(eq(board.type, type))
+      conditions.push(eq(board.type, type as 'regular' | 'template'))
     }
 
     return db.select().from(board)
@@ -165,8 +165,8 @@ export const boardService = {
       name: data.name,
       slug,
       workspaceId: ws.id,
-      visibility: data.visibility || 'private',
-      type: data.type || 'regular',
+      visibility: (data.visibility || 'private') as 'private' | 'public',
+      type: (data.type || 'regular') as 'regular' | 'template',
       createdBy: userId
     }).returning()
 
@@ -286,7 +286,12 @@ export const boardService = {
     }
 
     const [updated] = await db.update(board)
-      .set({ ...data, updatedAt: new Date() })
+      .set({
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.visibility !== undefined && { visibility: data.visibility as 'private' | 'public' }),
+        updatedAt: new Date(),
+      })
       .where(eq(board.id, boardData.id))
       .returning()
 

@@ -7,8 +7,8 @@ import { wrap } from '../utils/wrap'
 
 const router = Router()
 
-async function resolveWorkspace(slugOrId: string) {
-  const ws = await workspaceService.getById(slugOrId)
+async function resolveWorkspace(slugOrId: string, userId: string) {
+  const ws = await workspaceService.getById(slugOrId, userId)
   if (!ws) throw Object.assign(new Error('Workspace not found'), { status: 404 })
   return ws
 }
@@ -19,13 +19,13 @@ const toggleSchema = z.object({
 })
 
 router.get('/', requireAuth, wrap(async (req: AuthRequest, res) => {
-  const workspace = await resolveWorkspace(req.query.workspaceSlug as string)
+  const workspace = await resolveWorkspace(req.query.workspaceSlug as string, req.user!.id)
   const integrations = await integrationService.getByWorkspace(workspace.id)
   res.json({ data: integrations })
 }))
 
 router.put('/', requireAuth, wrap(async (req: AuthRequest, res) => {
-  const workspace = await resolveWorkspace(req.query.workspaceSlug as string)
+  const workspace = await resolveWorkspace(req.query.workspaceSlug as string, req.user!.id)
   const data = toggleSchema.parse(req.body)
   await integrationService.setConnected({
     ...data,
