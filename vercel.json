@@ -1,15 +1,18 @@
 {
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/dist",
+  "buildCommand": "cd frontend && npm run build && cp -r dist ../public",
   "installCommand": "cd frontend && npm install",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://managpro-backend-production.up.railway.app/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "/api/index.ts"
     },
     {
-      "source": "/uploads/:path*",
-      "destination": "https://pub-7f26a91a58984ae8838d7b7002119083.r2.dev/:path*"
+      "source": "/uploads/(.*)",
+      "destination": "https://pub-7f26a91a58984ae8838d7b7002119083.r2.dev/$1"
+    },
+    {
+      "source": "/((?!api/|uploads/).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
