@@ -1,19 +1,13 @@
 {
+  "installCommand": "npm install && cd frontend && npm install",
   "buildCommand": "cd frontend && npm run build && cp -r dist ../public",
-  "installCommand": "cd frontend && npm install && cd ../backend && npm install",
-  "builds": [
-    {
-      "src": "backend/api/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "backend/api/index.ts"
+      "source": "/api/(.*)",
+      "destination": "/api/index.ts"
     },
     {
-      "src": "/uploads/(.*)",
+      "source": "/uploads/(.*)",
       "destination": "https://pub-7f26a91a58984ae8838d7b7002119083.r2.dev/$1"
     },
     {
