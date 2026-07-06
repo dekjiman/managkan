@@ -47,4 +47,4 @@ if (!parsed.success) {
   }
 }
 
-export const env = parsed.data
+export const env = parsed.success ? parsed.data : process.env as any
