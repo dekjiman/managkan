@@ -4,7 +4,7 @@ let app: any
 
 try {
   console.log('Loading backend app...')
-  const mod = await import('../backend/src/index.js')
+  const mod = await import('../backend/src/index')
   app = mod.default
   console.log('Backend app loaded successfully')
 } catch (error: any) {
