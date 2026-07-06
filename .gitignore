@@ -45,3 +45,6 @@ coverage/
 *.pfx
 credentials.json
 service-account.json
+
+# Deployment
+deploy/
