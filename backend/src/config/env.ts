@@ -41,9 +41,10 @@ const parsed = envSchema.safeParse(process.env)
 
 if (!parsed.success) {
   const errors = parsed.error.flatten().fieldErrors
-  // Use console here since logger may not be initialized yet
   console.error('❌ Invalid environment variables:', errors)
-  process.exit(1)
+  if (process.env.VERCEL !== '1') {
+    process.exit(1)
+  }
 }
 
 export const env = parsed.data
