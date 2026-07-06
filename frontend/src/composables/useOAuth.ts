@@ -9,7 +9,7 @@ export function useOAuth() {
     isOAuthLoading.value = true
 
     const callbackURL = `${window.location.origin}${redirect || '/dashboard'}`
-    const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000'
+    const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || ''
 
     try {
       const res = await fetch(`${backendUrl}/api/auth/sign-in/social`, {
