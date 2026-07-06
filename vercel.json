@@ -4,12 +4,12 @@
   "installCommand": "cd frontend && npm install",
   "rewrites": [
     {
-      "source": "/uploads/(.*)",
-      "destination": "https://pub-7f26a91a58984ae8838d7b7002119083.r2.dev/$1"
+      "source": "/api/:path*",
+      "destination": "https://managpro-backend-production.up.railway.app/api/:path*"
     },
     {
-      "source": "/((?!api/|uploads/).*)",
-      "destination": "/index.html"
+      "source": "/uploads/:path*",
+      "destination": "https://pub-7f26a91a58984ae8838d7b7002119083.r2.dev/:path*"
     }
   ],
   "headers": [
