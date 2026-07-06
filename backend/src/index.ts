@@ -1,0 +1,74 @@
+import * as Sentry from '@sentry/node'
+import express from 'express'
+import cors from 'cors'
+import helmet from 'helmet'
+import path from 'path'
+import { toNodeHandler } from 'better-auth/node'
+import { auth } from './auth'
+import { env } from './config/env'
+import routes from './routes'
+import oauthRoutes from './routes/oauth'
+import { errorHandler } from './middleware/error'
+import { requireAuth } from './middleware/auth'
+import { authLimiter, apiLimiter } from './middleware/rateLimit'
+import { logger } from './config/logger'
+
+// Sentry initialization (must be before other imports)
+if (env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: env.SENTRY_DSN,
+    environment: env.NODE_ENV,
+    tracesSampleRate: env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  })
+}
+
+const app = express()
+
+// Security
+app.use(helmet())
+app.use(cors({
+  origin: env.FRONTEND_URL,
+  credentials: true
+}))
+
+// Rate limiting
+app.use('/api/auth', authLimiter)
+app.use('/api', apiLimiter)
+
+// OAuth redirect routes (must be before better-auth handler to avoid path conflicts)
+app.use('/api/auth', oauthRoutes)
+
+// Better-auth handler must run before body parsing (it reads the raw request)
+app.use('/api/auth', toNodeHandler(auth))
+
+// Body parsing
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true }))
+
+// Static files for uploads — behind auth
+app.use('/uploads', requireAuth, express.static(path.join(process.cwd(), 'uploads')))
+
+// Routes
+app.use('/api', routes)
+
+// Sentry error handler (must be before regular error handler)
+if (env.SENTRY_DSN) {
+  try {
+    app.use(Sentry.setupErrorHandler())
+  } catch {
+    // Sentry handler not available in this version
+  }
+}
+
+// Error handling
+app.use(errorHandler)
+
+// Start server (skip on Vercel — serverless handles this)
+if (process.env.VERCEL !== '1') {
+  const PORT = env.PORT
+  app.listen(PORT, () => {
+    logger.info({ port: PORT, env: env.NODE_ENV }, 'Server started')
+  })
+}
+
+export default app

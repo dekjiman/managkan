@@ -1,0 +1,27 @@
+import { integer, pgTable, serial, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+
+export const cardActivity = pgTable('card_activity', {
+  id: serial('id').primaryKey(),
+  publicId: varchar('publicId', { length: 12 }).notNull().unique(),
+  type: varchar('type', { length: 50 }).notNull(),
+  cardId: integer('cardId').notNull(),
+  fromIndex: integer('fromIndex'),
+  toIndex: integer('toIndex'),
+  fromListId: integer('fromListId'),
+  toListId: integer('toListId'),
+  labelId: integer('labelId'),
+  workspaceMemberId: integer('workspaceMemberId'),
+  fromTitle: text('fromTitle'),
+  toTitle: text('toTitle'),
+  fromDescription: text('fromDescription'),
+  toDescription: text('toDescription'),
+  createdBy: uuid('createdBy'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  commentId: integer('commentId'),
+  fromComment: text('fromComment'),
+  toComment: text('toComment'),
+  sourceBoardId: integer('sourceBoardId'),
+  fromDueDate: timestamp('fromDueDate'),
+  toDueDate: timestamp('toDueDate'),
+  attachmentId: integer('attachmentId'),
+})
