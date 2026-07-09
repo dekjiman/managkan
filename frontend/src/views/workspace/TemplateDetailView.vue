@@ -34,7 +34,7 @@
 
       <!-- Lists preview -->
       <div class="flex gap-4 overflow-x-auto pb-4">
-        <div v-for="list in lists" :key="list.publicId" class="min-w-[280px] max-w-[280px] shrink-0">
+        <div v-for="list in lists" :key="list.publicId" class="min-w-[200px] max-w-[280px] md:min-w-[280px] shrink-0">
           <div class="rounded-lg border border-light-300 dark:border-dark-400 bg-light-100 dark:bg-dark-100">
             <div class="px-3 py-2.5 border-b border-light-300 dark:border-dark-400">
               <h3 class="text-sm font-medium text-light-1000 dark:text-dark-1000">{{ list.name }}</h3>

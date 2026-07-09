@@ -150,6 +150,11 @@ async function handleClick(n: Notification) {
   }
   if (n.entityUrl) {
     router.push(n.entityUrl)
+  } else if (n.data) {
+    const d = n.data as any
+    if (d.workspaceSlug && d.boardSlug && d.cardPublicId) {
+      router.push(`/${d.workspaceSlug}/${d.boardSlug}/cards/${d.cardPublicId}`)
+    }
   }
 }
 

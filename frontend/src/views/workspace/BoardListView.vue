@@ -79,6 +79,7 @@
         <TemplateBoards
           :show="useTemplate"
           :selected-template="selectedTemplate"
+          :custom-templates="customTemplates"
           @select="selectedTemplate = $event"
         />
       </form>

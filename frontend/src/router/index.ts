@@ -25,7 +25,11 @@ const router = createRouter({
       path: '/verify-email-notice',
       name: 'verify-email-notice',
       component: () => import('@/views/auth/VerifyEmailNoticeView.vue'),
-      meta: { guest: true }
+    },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('@/views/auth/VerifyEmailView.vue'),
     },
     {
       path: '/invite/:code',
@@ -156,8 +160,23 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
+  // Handle OAuth redirect: save token from URL params
+  const accessToken = to.query.accessToken as string | undefined
+  if (accessToken) {
+    localStorage.setItem('accessToken', accessToken)
+    const refreshToken = to.query.refreshToken as string
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
+    const userId = to.query.userId as string
+    if (userId) localStorage.setItem('userId', userId)
+    return next({ path: to.path, replace: true })
+  }
+
   if (to.path === '/' && to.query.redirect) {
-    return next({ path: to.query.redirect as string, replace: true })
+    const redirect = to.query.redirect as string
+    if (redirect.startsWith('/') && !redirect.startsWith('//')) {
+      return next({ path: redirect, replace: true })
+    }
+    return next('/dashboard')
   }
 
   if (to.meta.auth && !authStore.isAuthenticated) {
@@ -171,7 +190,7 @@ router.beforeEach(async (to, from, next) => {
     return next('/dashboard')
   }
 
-  if (to.name === 'landing' && authStore.isAuthenticated) {
+  if (to.name === 'landing' && authStore.isAuthenticated && to.query.from !== 'sidebar') {
     return next('/dashboard')
   }
 

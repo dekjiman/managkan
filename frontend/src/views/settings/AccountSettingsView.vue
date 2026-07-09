@@ -29,7 +29,7 @@
           <p class="mb-4 text-sm text-light-800 dark:text-dark-700">
             Once you delete your account, there is no going back. This action cannot be undone.
           </p>
-          <Button variant="danger" @click="confirmDelete">Delete account</Button>
+          <Button variant="danger" @click="confirmDelete" :loading="isDeleting" :disabled="isDeleting">Delete account</Button>
         </div>
       </div>
     </SettingsLayout>
@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
 import { userService } from '@/services/user.service'
@@ -47,12 +48,14 @@ import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import Avatar from '@/components/ui/Avatar.vue'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToast()
 
 const user = ref<any>(null)
 const form = ref({ name: '' })
 const isSavingName = ref(false)
+const isDeleting = ref(false)
 
 onMounted(() => {
   user.value = authStore.user
@@ -80,6 +83,19 @@ async function updateName() {
 
 async function confirmDelete() {
   if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) return
-  toast.success('Account deletion requested')
+
+  isDeleting.value = true
+  try {
+    await userService.deleteMe()
+    authStore.clearUser()
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    toast.success('Account deleted')
+    router.push('/')
+  } catch (error: any) {
+    toast.error(error?.response?.data?.message || 'Failed to delete account')
+  } finally {
+    isDeleting.value = false
+  }
 }
 </script>

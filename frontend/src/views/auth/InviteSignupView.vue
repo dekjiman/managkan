@@ -174,6 +174,8 @@ async function handleInviteSignup() {
       password: form.value.password
     })
     if (result.user) {
+      if (result.accessToken) localStorage.setItem('accessToken', result.accessToken)
+      if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken)
       authStore.setUser(result.user)
     }
     router.push('/dashboard')

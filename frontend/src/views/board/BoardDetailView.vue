@@ -10,6 +10,11 @@
     <!-- Board Header -->
     <div class="h-12 shrink-0 border-b border-light-300 dark:border-dark-400 flex items-center justify-between px-4 bg-light-50 dark:bg-dark-50">
       <div class="flex items-center gap-3">
+        <button @click="toggleSidebar" class="md:hidden rounded p-1 hover:bg-light-200 dark:hover:bg-dark-200">
+          <svg class="w-5 h-5 text-light-900 dark:text-dark-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
         <h1 class="font-semibold text-sm text-light-1000 dark:text-dark-1000">{{ board.name }}</h1>
 
         <!-- Visibility Dropdown -->
@@ -39,10 +44,10 @@
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
-            Filter
+            <span class="hidden md:inline">Filter</span>
             <span v-if="activeFilterCount > 0" class="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-[10px] text-white">{{ activeFilterCount }}</span>
           </Button>
-          <div v-if="showFilterDropdown" class="absolute top-full right-0 mt-1 z-50 min-w-[240px] rounded-md border border-light-200 dark:border-dark-300 bg-white dark:bg-dark-200 py-1 shadow-lg" @click.stop>
+          <div v-if="showFilterDropdown" class="absolute top-full right-0 mt-1 z-50 w-screen max-w-[240px] md:min-w-[240px] rounded-md border border-light-200 dark:border-dark-300 bg-white dark:bg-dark-200 py-1 shadow-lg" @click.stop>
             <!-- Labels -->
             <div>
               <button @click="expandFilterCategory('labels')" class="flex w-full items-center gap-2 px-3 py-2 text-sm text-light-1000 dark:text-dark-1000 hover:bg-light-200 dark:hover:bg-dark-400">
@@ -115,7 +120,7 @@
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          New list
+          <span class="hidden md:inline">New list</span>
         </Button>
 
         <!-- Board Dropdown -->
@@ -375,6 +380,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useUIStore } from '@/stores/ui'
 import { useToast } from '@/composables/useToast'
 import { boardService } from '@/services/board.service'
 import { listService } from '@/services/list.service'
@@ -389,6 +395,11 @@ import draggable from 'vuedraggable'
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const uiStore = useUIStore()
+
+function toggleSidebar() {
+  uiStore.toggleSidebar()
+}
 
 const board = ref<any>(null)
 const isLoading = ref(true)

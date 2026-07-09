@@ -8,11 +8,15 @@ export function useOAuth() {
     oauthError.value = ''
     isOAuthLoading.value = true
 
-    const callbackURL = `${window.location.origin}${redirect || '/dashboard'}`
-    const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || ''
+    let safeRedirect = '/dashboard'
+    if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
+      safeRedirect = redirect
+    }
+    const callbackURL = `${window.location.origin}${safeRedirect}`
+    const baseUrl = import.meta.env.VITE_API_URL || '/api'
 
     try {
-      const res = await fetch(`${backendUrl}/api/auth/sign-in/social`, {
+      const res = await fetch(`${baseUrl}/auth/sign-in/social`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

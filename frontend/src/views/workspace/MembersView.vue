@@ -40,7 +40,8 @@
         />
       </div>
 
-      <div :class="['rounded-lg border border-light-300 dark:border-dark-400', openDropdown ? 'overflow-visible' : 'overflow-hidden']">
+      <!-- Desktop: Table -->
+      <div class="hidden md:block rounded-lg border border-light-300 dark:border-dark-400 overflow-hidden">
         <table class="min-w-full divide-y divide-light-300 dark:divide-dark-400">
           <thead class="bg-light-200 dark:bg-dark-200">
             <tr>
@@ -63,7 +64,7 @@
             <td class="px-3 py-3">
               <div class="flex items-center gap-2">
                 <Badge :variant="roleVariant(member.role)">{{ capitalize(member.role) }}</Badge>
-                <Badge v-if="member.status === 'invited'" variant="warning">Pending</Badge>
+                <Badge v-if="member.status === 'pending'" variant="warning">Pending</Badge>
               </div>
             </td>
             <td v-if="workspace?.role === 'admin'" class="px-3 py-3 text-right">
@@ -81,7 +82,7 @@
                   <button @click="changeRole(member.publicId, 'admin')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Set as Admin</button>
                   <button @click="changeRole(member.publicId, 'member')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Set as Member</button>
                   <button @click="changeRole(member.publicId, 'guest')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Set as Guest</button>
-                  <template v-if="member.status === 'invited'">
+                  <template v-if="member.status === 'pending'">
                     <div class="border-t border-light-300 dark:border-dark-400 my-1" />
                     <button @click="resendInvite(member.publicId)" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Resend invite</button>
                   </template>
@@ -94,6 +95,47 @@
         </tbody>
       </table>
     </div>
+
+      <!-- Mobile: Cards -->
+      <div class="md:hidden space-y-2">
+        <div v-for="member in filteredMembers" :key="member.publicId" class="rounded-lg border border-light-300 dark:border-dark-400 bg-light-50 dark:bg-dark-100 p-3">
+          <div class="flex items-center gap-3">
+            <Avatar :name="displayName(member)" :src="member.userImage" size="md" />
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium text-light-1000 dark:text-dark-1000 truncate">{{ displayName(member) }}</p>
+              <p class="text-xs text-light-700 dark:text-dark-700 truncate">{{ member.email }}</p>
+            </div>
+          </div>
+          <div class="mt-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <Badge :variant="roleVariant(member.role)">{{ capitalize(member.role) }}</Badge>
+              <Badge v-if="member.status === 'pending'" variant="warning">Pending</Badge>
+            </div>
+            <div v-if="workspace?.role === 'admin'" class="relative">
+              <button
+                @click.stop="toggleDropdown(member.publicId)"
+                class="rounded p-1 text-light-800 hover:bg-light-200 dark:text-dark-700 dark:hover:bg-dark-300"
+                title="Actions"
+              >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                </svg>
+              </button>
+              <div @click.stop v-if="openDropdown === member.publicId" class="absolute right-0 top-full mt-1 w-40 bg-light-50 dark:bg-dark-200 rounded-lg shadow-lg border border-light-300 dark:border-dark-400 py-1 z-10">
+                <button @click="changeRole(member.publicId, 'admin')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Set as Admin</button>
+                <button @click="changeRole(member.publicId, 'member')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Set as Member</button>
+                <button @click="changeRole(member.publicId, 'guest')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Set as Guest</button>
+                <template v-if="member.status === 'pending'">
+                  <div class="border-t border-light-300 dark:border-dark-400 my-1" />
+                  <button @click="resendInvite(member.publicId)" class="w-full text-left px-3 py-1.5 text-xs hover:bg-light-200 dark:hover:bg-dark-300">Resend invite</button>
+                </template>
+                <div class="border-t border-light-300 dark:border-dark-400 my-1" />
+                <button @click="removeMember(member.publicId)" class="w-full text-left px-3 py-1.5 text-xs text-red-600 hover:bg-light-200 dark:hover:bg-dark-300">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
 
     <Modal :is-open="showInviteModal" @close="showInviteModal = false">

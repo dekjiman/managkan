@@ -12,7 +12,12 @@ export interface Notification {
   entityUrl: string | null
   data: {
     comment?: string
+    cardId?: number
+    cardPublicId?: string
     cardTitle?: string
+    commentId?: string
+    workspaceSlug?: string
+    boardSlug?: string
     commenterName?: string
   } | null
   read: boolean
@@ -23,7 +28,12 @@ export interface Notification {
 export const notificationService = {
   async getAll(): Promise<{ data: Notification[] }> {
     const response = await api.get('/notifications')
-    return response.data
+    const notifications = (response.data.data || []).map((n: any) => ({
+      ...n,
+      data: typeof n.data === 'string' ? JSON.parse(n.data) : n.data,
+      read: n.read === 1 || n.read === true,
+    }))
+    return { data: notifications }
   },
 
   async getUnreadCount(): Promise<{ data: { count: number } }> {

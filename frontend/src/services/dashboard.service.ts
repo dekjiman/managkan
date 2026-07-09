@@ -11,11 +11,11 @@ export interface DashboardData {
   cardsOverTime: { date: string; count: number }[]
   overdue: {
     count: number
-    cards: { publicId: string; title: string; dueDate: string; listName: string; boardName: string }[]
+    cards: { publicId: string; title: string; dueDate: string; listName: string; boardName: string; workspaceSlug: string; boardSlug: string }[]
   }
   dueSoon: {
     count: number
-    cards: { publicId: string; title: string; dueDate: string; listName: string; boardName: string }[]
+    cards: { publicId: string; title: string; dueDate: string; listName: string; boardName: string; workspaceSlug: string; boardSlug: string }[]
   }
   userActivity: { name: string; count: number }[]
   boardsPerWorkspace: { name: string; count: number }[]

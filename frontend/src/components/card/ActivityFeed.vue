@@ -93,7 +93,7 @@ const filteredMentions = computed(() => {
 
 const sortedActivities = computed(() => {
   return [...activities.value].sort((a, b) =>
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   )
 })
 

@@ -11,16 +11,58 @@
             <span class="text-lg font-bold text-light-1000 dark:text-dark-1000">ManagPro</span>
           </div>
           <div class="hidden md:flex items-center gap-8">
+            <a href="#how-it-works" class="text-sm text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">How it works</a>
             <a href="#features" class="text-sm text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Features</a>
             <a href="#pricing" class="text-sm text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Pricing</a>
           </div>
           <div class="flex items-center gap-3">
-            <router-link to="/login" class="text-sm text-light-900 dark:text-dark-900 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">
-              Sign in
-            </router-link>
-            <router-link to="/register" class="inline-flex items-center justify-center h-9 px-4 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-opacity">
-              Get started
-            </router-link>
+            <template v-if="isAuthenticated">
+              <div class="relative">
+                <button @click.stop="showUserMenu = !showUserMenu" class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-light-200 dark:hover:bg-dark-200 transition-colors">
+                  <div class="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                    <span class="text-xs font-semibold text-primary-700 dark:text-primary-400">{{ user?.name?.charAt(0)?.toUpperCase() || 'U' }}</span>
+                  </div>
+                  <span class="text-sm text-light-900 dark:text-dark-900 hidden sm:inline">{{ user?.name }}</span>
+                  <svg class="w-4 h-4 text-light-700 dark:text-dark-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div v-if="showUserMenu" class="absolute right-0 top-full mt-2 w-48 bg-light-50 dark:bg-dark-200 rounded-lg shadow-lg border border-light-300 dark:border-dark-400 py-1 z-50">
+                  <div class="px-3 py-2 border-b border-light-300 dark:border-dark-400">
+                    <p class="text-sm font-medium text-light-1000 dark:text-dark-1000">{{ user?.name }}</p>
+                    <p class="text-xs text-light-700 dark:text-dark-700 truncate">{{ user?.email }}</p>
+                  </div>
+                  <router-link to="/dashboard" class="flex items-center gap-2 px-3 py-2 text-sm text-light-900 dark:text-dark-900 hover:bg-light-200 dark:hover:bg-dark-300">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                  </router-link>
+                  <router-link to="/settings/account" class="flex items-center gap-2 px-3 py-2 text-sm text-light-900 dark:text-dark-900 hover:bg-light-200 dark:hover:bg-dark-300">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                  </router-link>
+                  <div class="border-t border-light-300 dark:border-dark-400 my-1" />
+                  <button @click="handleLogout" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-light-200 dark:hover:bg-dark-300">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <router-link to="/login" class="text-sm text-light-900 dark:text-dark-900 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">
+                Sign in
+              </router-link>
+              <router-link to="/register" class="inline-flex items-center justify-center h-9 px-4 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-opacity">
+                Get started
+              </router-link>
+            </template>
           </div>
         </div>
       </div>
@@ -43,15 +85,25 @@
           Kanban boards, team collaboration, billing, and notifications — everything you need to ship faster, in one place.
         </p>
         <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
-          <router-link to="/register" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-opacity">
-            Get started free
-            <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </router-link>
-          <router-link to="/login" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg border border-light-300 dark:border-dark-400 text-sm font-medium text-light-900 dark:text-dark-900 hover:bg-light-200 dark:hover:bg-dark-200 transition-colors">
-            Sign in
-          </router-link>
+          <template v-if="isAuthenticated">
+            <router-link to="/dashboard" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-opacity">
+              Go to Dashboard
+              <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </router-link>
+          </template>
+          <template v-else>
+            <router-link to="/register" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-opacity">
+              Get started free
+              <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </router-link>
+            <router-link to="/login" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg border border-light-300 dark:border-dark-400 text-sm font-medium text-light-900 dark:text-dark-900 hover:bg-light-200 dark:hover:bg-dark-200 transition-colors">
+              Sign in
+            </router-link>
+          </template>
         </div>
 
         <!-- Hero Visual -->
@@ -87,17 +139,52 @@
       </div>
     </section>
 
+    <!-- How it works -->
+    <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16 animate-fade-in">
+          <h2 class="text-3xl font-bold text-light-1000 dark:text-dark-1000">How it works</h2>
+          <p class="mt-3 text-light-800 dark:text-dark-800 max-w-lg mx-auto">
+            Get started in three simple steps.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center animate-fade-in">
+            <div class="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-4">
+              <span class="text-lg font-bold text-primary-600 dark:text-primary-400">1</span>
+            </div>
+            <h3 class="text-lg font-semibold text-light-1000 dark:text-dark-1000 mb-2">Create a workspace</h3>
+            <p class="text-sm text-light-800 dark:text-dark-800">Set up your team's workspace in seconds. Invite members and start collaborating right away.</p>
+          </div>
+          <div class="text-center animate-fade-in">
+            <div class="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-4">
+              <span class="text-lg font-bold text-primary-600 dark:text-primary-400">2</span>
+            </div>
+            <h3 class="text-lg font-semibold text-light-1000 dark:text-dark-1000 mb-2">Organize with boards</h3>
+            <p class="text-sm text-light-800 dark:text-dark-800">Create kanban boards, add lists and cards. Drag and drop to track your team's progress.</p>
+          </div>
+          <div class="text-center animate-fade-in">
+            <div class="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-4">
+              <span class="text-lg font-bold text-primary-600 dark:text-primary-400">3</span>
+            </div>
+            <h3 class="text-lg font-semibold text-light-1000 dark:text-dark-1000 mb-2">Ship faster together</h3>
+            <p class="text-sm text-light-800 dark:text-dark-800">Assign members, set due dates, track progress. Stay on top of every task with notifications.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Features -->
     <section id="features" class="py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-16">
+        <div class="text-center mb-16 animate-fade-in">
           <h2 class="text-3xl font-bold text-light-1000 dark:text-dark-1000">Everything you need</h2>
           <p class="mt-3 text-light-800 dark:text-dark-800 max-w-lg mx-auto">
             Powerful features to help your team collaborate and ship faster.
           </p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="feature in features" :key="feature.title" class="rounded-xl border border-light-300 dark:border-dark-400 p-6 hover:shadow-lg transition-shadow">
+          <div v-for="(feature, index) in features" :key="feature.title" class="rounded-xl border border-light-300 dark:border-dark-400 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-slide-up" :class="`animate-delay-${(index + 1) * 100}`">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" :class="feature.iconBg">
               <svg class="w-5 h-5" :class="feature.iconColor" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" :d="feature.icon" />
@@ -113,7 +200,7 @@
     <!-- Pricing -->
     <section id="pricing" class="py-20 px-4 sm:px-6 lg:px-8 bg-light-100 dark:bg-dark-100">
       <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-16">
+        <div class="text-center mb-16 animate-fade-in">
           <h2 class="text-3xl font-bold text-light-1000 dark:text-dark-1000">Simple, transparent pricing</h2>
           <p class="mt-3 text-light-800 dark:text-dark-800 max-w-lg mx-auto">
             Start free, upgrade when you need more. No hidden fees.
@@ -121,35 +208,42 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div
-            v-for="p in plans"
+            v-for="(p, index) in plans"
             :key="p.name"
-            class="rounded-xl border p-6 flex flex-col relative"
-            :class="p.name === 'team'
-              ? 'border-2 border-light-1000 dark:border-dark-1000 shadow-lg'
-              : 'border-light-300 dark:border-dark-400'"
+            class="pricing-card rounded-xl border p-6 flex flex-col relative animate-slide-up"
+            :class="[
+              p.name === 'team'
+                ? 'border-2 border-primary-500 dark:border-primary-400 shadow-lg'
+                : 'border-light-300 dark:border-dark-400',
+              `animate-delay-${(index + 1) * 100}`
+            ]"
           >
-            <div v-if="p.name === 'team'" class="absolute -top-3 left-6 px-3 py-0.5 rounded-full bg-light-1000 dark:bg-dark-1000 text-[10px] font-semibold text-light-50 dark:text-dark-50">
+            <div v-if="p.name === 'team'" class="absolute -top-3 left-6 px-3 py-0.5 rounded-full bg-primary-500 dark:bg-primary-400 text-[10px] font-semibold text-white">
               POPULAR
             </div>
             <h3 class="text-sm font-semibold text-light-1000 dark:text-dark-1000">{{ p.displayName }}</h3>
-            <p class="mt-4 text-3xl font-bold text-light-1000 dark:text-dark-1000">
-              {{ p.price === 0 ? 'Free' : `Rp ${p.price.toLocaleString('id-ID')}` }}
-            </p>
-            <p class="text-xs text-light-800 dark:text-dark-800 mt-1">{{ p.price > 0 ? '/month' : 'forever' }}</p>
+            <div class="mt-4 flex items-baseline gap-1">
+              <span v-if="p.price === 0" class="text-3xl font-bold text-light-1000 dark:text-dark-1000">Free</span>
+              <template v-else>
+                <span class="text-lg font-semibold text-light-700 dark:text-dark-700">Rp</span>
+                <span class="text-3xl font-bold text-light-1000 dark:text-dark-1000">{{ p.price.toLocaleString('id-ID') }}</span>
+              </template>
+            </div>
+            <p class="text-xs text-light-800 dark:text-dark-800 mt-1">{{ p.price > 0 ? '/bulan' : 'selamanya' }}</p>
             <ul class="mt-6 space-y-3 flex-1">
               <li v-for="(feat, i) in p.features" :key="i" class="flex items-start gap-2 text-xs text-light-900 dark:text-dark-900">
                 <svg class="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                {{ feat }}
+                {{ formatFeature(feat) }}
               </li>
             </ul>
             <router-link
               to="/register"
-              class="mt-6 w-full inline-flex items-center justify-center h-10 rounded-lg text-sm font-medium transition-colors"
+              class="mt-6 w-full inline-flex items-center justify-center h-10 rounded-lg text-sm font-medium transition-all duration-200"
               :class="p.name === 'team'
-                ? 'bg-light-1000 dark:bg-dark-1000 text-light-50 dark:text-dark-50 hover:opacity-90'
-                : 'border border-light-300 dark:border-dark-400 text-light-900 dark:text-dark-900 hover:bg-light-200 dark:hover:bg-dark-300'"
+                ? 'bg-primary-500 dark:bg-primary-400 text-white hover:bg-primary-600 dark:hover:bg-primary-500 hover:shadow-md'
+                : 'border border-light-300 dark:border-dark-400 text-light-900 dark:text-dark-900 hover:bg-light-200 dark:hover:bg-dark-300 hover:border-light-400 dark:hover:border-dark-500'"
             >
               Get started
             </router-link>
@@ -160,13 +254,13 @@
 
     <!-- CTA -->
     <section class="py-20 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-3xl mx-auto text-center">
+      <div class="max-w-3xl mx-auto text-center animate-fade-in">
         <h2 class="text-3xl font-bold text-light-1000 dark:text-dark-1000">Ready to get started?</h2>
         <p class="mt-4 text-light-800 dark:text-dark-800">
           Join teams already using ManagPro to manage their projects.
         </p>
         <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <router-link to="/register" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-opacity">
+          <router-link to="/register" class="w-full sm:w-auto inline-flex items-center justify-center h-11 px-6 rounded-lg bg-light-1000 dark:bg-dark-1000 text-sm font-medium text-light-50 dark:text-dark-50 hover:opacity-90 transition-all duration-200 hover:shadow-lg">
             Start for free
             <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -202,9 +296,14 @@
           <div>
             <h4 class="text-xs font-semibold text-light-1000 dark:text-dark-1000 mb-3">Account</h4>
             <ul class="space-y-2">
-              <li><router-link to="/login" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Sign in</router-link></li>
-              <li><router-link to="/register" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Sign up</router-link></li>
-              <li><router-link to="/forgot-password" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Reset password</router-link></li>
+              <template v-if="isAuthenticated">
+                <li><router-link to="/dashboard" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Dashboard</router-link></li>
+              </template>
+              <template v-else>
+                <li><router-link to="/login" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Sign in</router-link></li>
+                <li><router-link to="/register" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Sign up</router-link></li>
+                <li><router-link to="/forgot-password" class="text-xs text-light-800 dark:text-dark-800 hover:text-light-1000 dark:hover:text-dark-1000 transition-colors">Reset password</router-link></li>
+              </template>
             </ul>
           </div>
           <div>
@@ -232,11 +331,95 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useAuth } from '@/composables/useAuth'
 import { planService, type Plan } from '@/services/plan.service'
 
+const router = useRouter()
+const authStore = useAuthStore()
+const { logout } = useAuth()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const user = computed(() => authStore.user)
+const showUserMenu = ref(false)
+
+function handleLogout() {
+  showUserMenu.value = false
+  logout()
+}
+
+function handleClickOutside() {
+  showUserMenu.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
 const currentYear = computed(() => new Date().getFullYear())
-const plans = ref<Plan[]>([])
+
+const featureLabels: Record<string, string> = {
+  basic_boards: '3 boards',
+  basic_members: '3 members',
+  unlimited_boards: 'Unlimited boards',
+  unlimited_members: 'Unlimited members',
+  unlimited_all: 'Unlimited everything',
+  api_access: 'API access',
+  webhooks: 'Webhooks',
+  advanced_reports: 'Advanced reports',
+  priority_support: 'Priority support',
+}
+
+const formatFeature = (feat: string) => featureLabels[feat] || feat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+
+const fallbackPlans: Plan[] = [
+  {
+    id: 1,
+    name: 'free',
+    displayName: 'Free',
+    price: 0,
+    currency: 'IDR',
+    boardLimit: 3,
+    memberLimit: 3,
+    workspaceLimit: 1,
+    storageLimit: 10485760,
+    features: ['basic_boards', 'basic_members'],
+    isActive: true,
+  },
+  {
+    id: 2,
+    name: 'team',
+    displayName: 'Team',
+    price: 50000,
+    currency: 'IDR',
+    boardLimit: 20,
+    memberLimit: 20,
+    workspaceLimit: 5,
+    storageLimit: 104857600,
+    features: ['unlimited_boards', 'unlimited_members', 'api_access', 'webhooks'],
+    isActive: true,
+  },
+  {
+    id: 3,
+    name: 'professional',
+    displayName: 'Professional',
+    price: 150000,
+    currency: 'IDR',
+    boardLimit: -1,
+    memberLimit: -1,
+    workspaceLimit: -1,
+    storageLimit: 1073741824,
+    features: ['unlimited_all', 'api_access', 'webhooks', 'advanced_reports', 'priority_support'],
+    isActive: true,
+  },
+]
+
+const plans = ref<Plan[]>(fallbackPlans)
 
 const features = [
   {
@@ -272,9 +455,14 @@ const features = [
 onMounted(async () => {
   try {
     const res = await planService.getAll()
-    plans.value = res.data || []
+    if (res.data?.length) {
+      plans.value = res.data.map(p => ({
+        ...p,
+        features: typeof p.features === 'string' ? JSON.parse(p.features) : p.features,
+      }))
+    }
   } catch {
-    // fallback
+    // keep fallback plans
   }
 })
 </script>

@@ -10,6 +10,8 @@ export function useAuth() {
   async function login(email: string, password: string) {
     const response = await authService.signIn({ email, password })
     if (response.user) {
+      if (response.accessToken) localStorage.setItem('accessToken', response.accessToken)
+      if (response.refreshToken) localStorage.setItem('refreshToken', response.refreshToken)
       authStore.setUser(response.user)
       const redirect = (route.query.redirect as string) || '/dashboard'
       router.push(redirect)
@@ -30,8 +32,15 @@ export function useAuth() {
   }
 
   async function logout() {
-    await authService.signOut()
+    try {
+      await authService.signOut()
+    } catch {
+      // proceed even if API call fails
+    }
     authStore.clearUser()
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('userId')
     router.push('/login')
   }
 

@@ -9,5 +9,10 @@ export const userService = {
   async updateMe(data: { name?: string; image?: string }) {
     const response = await api.patch('/users/me', data)
     return response.data
+  },
+
+  async deleteMe() {
+    const response = await api.delete('/users/me')
+    return response.data
   }
 }

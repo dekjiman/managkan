@@ -11,9 +11,7 @@ export const attachmentService = {
     formData.append('file', file)
 
     const response = await api.post(`/attachments/${cardId}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+      headers: { 'Content-Type': undefined }
     })
     return response.data
   },

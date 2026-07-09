@@ -94,9 +94,9 @@
               <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ dashboard.overdue.count }} Overdue</span>
             </div>
             <div class="space-y-1.5">
-              <div v-for="card in dashboard.overdue.cards.slice(0, 3)" :key="card.publicId" class="text-xs text-red-600 dark:text-red-400">
+              <router-link v-for="card in dashboard.overdue.cards.slice(0, 3)" :key="card.publicId" :to="`/${card.workspaceSlug}/${card.boardSlug}/cards/${card.publicId}`" class="block text-xs text-red-600 dark:text-red-400 hover:underline">
                 {{ card.title }} <span class="text-red-400 dark:text-red-500">· {{ card.boardName }}</span>
-              </div>
+              </router-link>
               <p v-if="dashboard.overdue.count > 3" class="text-xs text-red-400 dark:text-red-500">+{{ dashboard.overdue.count - 3 }} more</p>
             </div>
           </div>
@@ -109,9 +109,9 @@
               <span class="text-sm font-semibold text-yellow-700 dark:text-yellow-400">{{ dashboard.dueSoon.count }} Due Soon</span>
             </div>
             <div class="space-y-1.5">
-              <div v-for="card in dashboard.dueSoon.cards.slice(0, 3)" :key="card.publicId" class="text-xs text-yellow-600 dark:text-yellow-400">
+              <router-link v-for="card in dashboard.dueSoon.cards.slice(0, 3)" :key="card.publicId" :to="`/${card.workspaceSlug}/${card.boardSlug}/cards/${card.publicId}`" class="block text-xs text-yellow-600 dark:text-yellow-400 hover:underline">
                 {{ card.title }} <span class="text-yellow-400 dark:text-yellow-500">· {{ card.boardName }}</span>
-              </div>
+              </router-link>
               <p v-if="dashboard.dueSoon.count > 3" class="text-xs text-yellow-400 dark:text-yellow-500">+{{ dashboard.dueSoon.count - 3 }} more</p>
             </div>
           </div>

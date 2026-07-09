@@ -6,12 +6,12 @@
 
     <!-- Tabs -->
     <div v-if="showTabs" class="border-b border-light-300 dark:border-dark-400 mb-8">
-      <nav class="flex space-x-8 overflow-x-auto">
+      <nav class="flex space-x-4 md:space-x-8 overflow-x-auto">
         <router-link
           v-for="tab in availableTabs"
           :key="tab.key"
           :to="tab.href"
-          class="whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors"
+          class="whitespace-nowrap border-b-2 px-2 md:px-1 py-4 text-sm font-medium transition-colors"
           :class="isActive(tab.key) ? 'border-light-1000 text-light-1000 dark:border-dark-1000 dark:text-dark-1000' : 'border-transparent text-light-900 hover:border-light-950 dark:text-dark-900 dark:hover:text-dark-950'"
         >
           {{ tab.label }}

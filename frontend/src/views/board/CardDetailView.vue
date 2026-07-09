@@ -2,13 +2,18 @@
   <div v-if="isLoading" class="flex justify-center py-12">
     <LoadingSpinner />
   </div>
-  <div v-else-if="card" class="flex h-[calc(100vh-5.5rem)]">
+  <div v-else-if="card" class="flex flex-col md:flex-row h-[calc(100vh-5.5rem)]">
     <!-- Left: Card Content -->
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto md:overflow-y-auto">
       <div class="mx-auto w-full max-w-[800px] p-6 md:p-8">
         <!-- Header -->
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-1 text-sm">
+            <button @click="toggleSidebar" class="md:hidden rounded p-1 -ml-1 hover:bg-light-200 dark:hover:bg-dark-200 mr-1">
+              <svg class="w-5 h-5 text-light-900 dark:text-dark-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18" />
+              </svg>
+            </button>
             <router-link :to="`/${workspaceSlug}`" class="font-bold text-light-900 dark:text-dark-950 hover:underline">{{ board?.name }}</router-link>
             <svg class="w-2.5 h-2.5 text-light-900 dark:text-dark-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
             <span v-if="card.cardNumber" class="font-bold text-light-700 dark:text-dark-800">{{ card.cardNumber }}</span>
@@ -130,7 +135,7 @@
     </div>
 
     <!-- Right Sidebar -->
-    <div class="w-[360px] shrink-0 border-l border-light-300 dark:border-dark-300 bg-light-50 dark:bg-dark-50 p-8 overflow-y-auto">
+    <div class="w-full md:w-[360px] shrink-0 border-t md:border-t-0 md:border-l border-light-300 dark:border-dark-300 bg-light-50 dark:bg-dark-50 p-4 md:p-8 overflow-y-auto">
       <div class="space-y-4">
         <div class="mb-4 flex w-full flex-row">
           <p class="my-2 w-[100px] text-sm font-medium text-light-1000 dark:text-dark-1000">List</p>
@@ -204,6 +209,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from '@/composables/useToast'
+import { useUIStore } from '@/stores/ui'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { boardService } from '@/services/board.service'
 import { cardService } from '@/services/card.service'
@@ -219,6 +225,11 @@ import { formatTimeAgo } from '@/utils/date'
 const route = useRoute()
 const toast = useToast()
 const workspaceStore = useWorkspaceStore()
+const uiStore = useUIStore()
+
+function toggleSidebar() {
+  uiStore.toggleSidebar()
+}
 
 const workspaceSlug = computed(() => route.params.workspaceSlug as string)
 const boardSlug = computed(() => route.params.boardSlug as string)
@@ -388,8 +399,6 @@ async function uploadFile(file: File) {
   if (!card.value?.id) return
   uploadProgress.value = 1
   try {
-    const formData = new FormData()
-    formData.append('file', file)
     await attachmentService.upload(card.value.id, file)
     uploadProgress.value = 100
     await refreshCard()
@@ -401,11 +410,17 @@ async function uploadFile(file: File) {
   }
 }
 
+const MAX_FILE_SIZE = 50 * 1024 * 1024
+
 async function handleFileSelect(e: Event) {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
   input.value = ''
+  if (file.size > MAX_FILE_SIZE) {
+    toast.error('File exceeds maximum size of 50MB')
+    return
+  }
   await uploadFile(file)
 }
 
@@ -413,6 +428,10 @@ async function handleDrop(e: DragEvent) {
   dragOver.value = false
   const file = e.dataTransfer?.files?.[0]
   if (!file) return
+  if (file.size > MAX_FILE_SIZE) {
+    toast.error('File exceeds maximum size of 50MB')
+    return
+  }
   await uploadFile(file)
 }
 

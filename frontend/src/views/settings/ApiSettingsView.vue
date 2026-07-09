@@ -155,7 +155,10 @@ async function fetchKeys() {
   isLoading.value = true
   try {
     const res = await apiKeyService.getByWorkspace(workspaceSlug.value)
-    keys.value = res.data || []
+    keys.value = (res.data || []).map((k: any) => ({
+      ...k,
+      id: k.publicId,
+    }))
   } catch {
     keys.value = []
   } finally {

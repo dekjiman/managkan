@@ -15,7 +15,16 @@ import { logger } from './config/logger'
 const app = express()
 
 // Security
-app.use(helmet())
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://snap-assets.sandbox.midtrans.com", "https://api.sandbox.midtrans.com", "https://pay.google.com", "https://gwk.gopayapi.com", "https://www.googletagmanager.com"],
+      frameSrc: ["'self'", "https://app.sandbox.midtrans.com", "https://accounts.google.com"],
+      connectSrc: ["'self'", "https://api.sandbox.midtrans.com"],
+    }
+  }
+}))
 app.use(cors({
   origin: env.FRONTEND_URL,
   credentials: true

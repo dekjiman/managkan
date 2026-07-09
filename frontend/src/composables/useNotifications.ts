@@ -56,11 +56,22 @@ export function useNotifications() {
     isOpen.value = false
   }
 
+  let pollRetries = 0
+  const maxRetries = 5
+  const baseInterval = 30000
+
   function startPolling() {
     fetchUnreadCount()
     pollingInterval = setInterval(() => {
-      fetchUnreadCount()
-    }, 30000)
+      fetchUnreadCount().then(() => {
+        pollRetries = 0
+      }).catch(() => {
+        pollRetries = Math.min(pollRetries + 1, maxRetries)
+        const delay = baseInterval * Math.pow(2, pollRetries)
+        if (pollingInterval) clearInterval(pollingInterval)
+        pollingInterval = setTimeout(() => startPolling(), delay) as unknown as ReturnType<typeof setInterval>
+      })
+    }, baseInterval)
   }
 
   function stopPolling() {
