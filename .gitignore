@@ -1,0 +1,16 @@
+/backend/.env
+/backend/vendor/
+/backend/writable/
+/backend/build/
+/backend/builds/
+/backend/public/uploads/
+node_modules/
+.mimocode/
+ai-rules/
+frontend_extracted/
+*.zip
+*.sql
+*.log
+*.txt
+.DS_Store
+Thumbs.db

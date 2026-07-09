@@ -1,0 +1,9 @@
+vendor/
+node_modules/
+.env
+.env.*.local
+uploads/*
+!uploads/.gitkeep
+writable/
+builds/
+*.log
